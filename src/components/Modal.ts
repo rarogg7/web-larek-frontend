@@ -1,17 +1,9 @@
 import { IEvents } from "./base/events";
 import { settings } from "../utils/constants";
 
-export interface IModal {
+export class ModalView {
 	modalContainer: HTMLElement;
-	btnClose: HTMLButtonElement
-	open(): void
-	close(): void
-	render(): HTMLElement
-}
-
-export class ModalView implements IModal {
-	modalContainer: HTMLElement;
-	btnClose: HTMLButtonElement;
+	buttonClose: HTMLButtonElement;
 	_content: HTMLElement;
 	_pageWrapper: HTMLElement;
 	
@@ -20,11 +12,11 @@ export class ModalView implements IModal {
 		protected events: IEvents,
 	) {
 		this.modalContainer = container;
-		this.btnClose = this.modalContainer.querySelector('.modal__close');
+		this.buttonClose = this.modalContainer.querySelector('.modal__close');
 		this._content = this.modalContainer.querySelector('.modal__content');
 		this._pageWrapper = document.querySelector('.page__wrapper');
 		
-		this.btnClose.addEventListener('click', this.close.bind(this));
+		this.buttonClose.addEventListener('click', this.close.bind(this));
 		
 		this.modalContainer.addEventListener('click', this.close.bind(this));
 		const rootContainer = this.modalContainer.querySelector('.modal__container');

@@ -1,7 +1,7 @@
 import { events, storeModel, page, cardCatalogTemplateElement, cardPreviewTemplateElement, modalView } from '../context';
 import { settings } from '../../utils/constants';
-import { CardView } from '../CardView';
-import { CardPreviewView } from '../CardView';
+import { CardView } from '../Card';
+import { CardPreviewView } from '../Card';
 import { ICard } from '../../types';
 
 events.on(settings.cardsGet, () => {

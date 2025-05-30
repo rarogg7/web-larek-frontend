@@ -1,15 +1,7 @@
 import { CategoryType, ICard } from '../types';
 import { IEvents } from './base/events';
 import { settings } from '../utils/constants';
-
-// Цвета категорий
-const INITIAL_COLORS: Record<CategoryType, string> = {
-	'софт-скил': 'soft',
-	'кнопка': 'button',
-	'хард-скил': 'hard',
-	'дополнительное': 'additional',
-	'другое': 'other',
-};
+import { INITIAL_COLORS } from '../utils/constants';
 
 // Интерфейс базовой карточки
 export interface InterfaceCard {
@@ -25,12 +17,12 @@ export interface ICardPreview {
 
 // Базовая карточка
 export class CardView implements InterfaceCard {
-	protected ctx: HTMLElement;
-	protected category: HTMLElement;
-	protected title: HTMLElement;
-	protected image: HTMLImageElement;
-	protected price: HTMLElement;
-	protected colors: Record<CategoryType, string> = INITIAL_COLORS;
+	protected _ctx: HTMLElement;
+	protected _category: HTMLElement;
+	protected _title: HTMLElement;
+	protected _image: HTMLImageElement;
+	protected _price: HTMLElement;
+	protected _colors: Record<CategoryType, string> = INITIAL_COLORS;
 
 	constructor(
 		template: HTMLTemplateElement,
@@ -39,19 +31,19 @@ export class CardView implements InterfaceCard {
 		const cardNode = template.content.querySelector('.card');
 		if (!cardNode) throw new Error('Template must contain .card element');
 
-		this.ctx = cardNode.cloneNode(true) as HTMLElement;
+		this._ctx = cardNode.cloneNode(true) as HTMLElement;
 
-		this.category = this.ctx.querySelector('.card__category');
-		this.title = this.ctx.querySelector('.card__title');
-		this.image = this.ctx.querySelector('.card__image');
-		this.price = this.ctx.querySelector('.card__price');
+		this._category = this._ctx.querySelector('.card__category');
+		this._title = this._ctx.querySelector('.card__title');
+		this._image = this._ctx.querySelector('.card__image');
+		this._price = this._ctx.querySelector('.card__price');
 
-		if (!this.category || !this.title || !this.image || !this.price) {
+		if (!this._category || !this._title || !this._image || !this._price) {
 			throw new Error('Card template is missing required elements');
 		}
 
 		if (actions?.onClick) {
-			this.ctx.addEventListener('click', actions.onClick);
+			this._ctx.addEventListener('click', actions.onClick);
 		}
 	}
 
@@ -60,9 +52,9 @@ export class CardView implements InterfaceCard {
 	}
 
 	protected _setCategory(category: CategoryType | null): void {
-		this._setTextContent(this.category, category);
-		const className = this.colors[category] || 'other';
-		this.category.className = `card__category card__category_${className}`;
+		this._setTextContent(this._category, category);
+		const className = this._colors[category] || 'other';
+		this._category.className = `card__category card__category_${className}`;
 	}
 
 	protected _setPrice(price: number | null = null): string {
@@ -71,11 +63,11 @@ export class CardView implements InterfaceCard {
 
 	render(card: ICard): HTMLElement {
 		this._setCategory(card.category);
-		this._setTextContent(this.title, card.title);
-		this.image.src = card.image;
-		this.image.alt = card.title;
-		this._setTextContent(this.price, this._setPrice(card.price));
-		return this.ctx;
+		this._setTextContent(this._title, card.title);
+		this._image.src = card.image;
+		this._image.alt = card.title;
+		this._setTextContent(this._price, this._setPrice(card.price));
+		return this._ctx;
 	}
 }
 
@@ -91,8 +83,8 @@ export class CardPreviewView extends CardView implements ICardPreview {
 	) {
 		super(template, actions);
 
-		this.text = this.ctx.querySelector('.card__text');
-		this.btn = this.ctx.querySelector('.card__button');
+		this.text = this._ctx.querySelector('.card__text');
+		this.btn = this._ctx.querySelector('.card__button');
 
 		if (!this.text || !this.btn) {
 			throw new Error('CardPreviewView template missing .card__text or .card__button');
@@ -118,6 +110,6 @@ export class CardPreviewView extends CardView implements ICardPreview {
 		super.render(card);
 		this._setTextContent(this.text, card.description);
 		this._setTextContent(this.btn, this._setBtnText(card));
-		return this.ctx;
+		return this._ctx;
 	}
 }

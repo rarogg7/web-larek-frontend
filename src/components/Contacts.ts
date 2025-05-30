@@ -4,7 +4,7 @@ import { settings } from "../utils/constants";
 export interface IContacts {
 	contacts: HTMLFormElement;
 	inputsList: HTMLInputElement[];
-	btnSubmit: HTMLButtonElement;
+	buttonSubmit: HTMLButtonElement;
 	errors: HTMLElement;
 	render(): HTMLElement
 }
@@ -12,7 +12,7 @@ export interface IContacts {
 export class ContactsView implements IContacts{
 	contacts: IContacts['contacts'];
 	inputsList: IContacts['inputsList'];
-	btnSubmit: IContacts['btnSubmit'];
+	buttonSubmit: IContacts['buttonSubmit'];
 	errors: IContacts['errors'];
 	
 	constructor(
@@ -21,7 +21,7 @@ export class ContactsView implements IContacts{
 	) {
 		this.contacts = template.content.querySelector('.form').cloneNode(true) as IContacts['contacts'];
 		this.inputsList = Array.from(this.contacts.querySelectorAll('.form__input'));
-		this.btnSubmit = this.contacts.querySelector('.button');
+		this.buttonSubmit = this.contacts.querySelector('.button');
 		this.errors = this.contacts.querySelector('.form__errors');
 		
 		this.inputsList.forEach((input: HTMLInputElement) => {
@@ -41,7 +41,7 @@ export class ContactsView implements IContacts{
 	}
 	
 	isValid(v: boolean) {
-		this.btnSubmit.disabled = !v
+		this.buttonSubmit.disabled = !v
 	}
 	
 	render(): HTMLElement {

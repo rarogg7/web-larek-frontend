@@ -1,14 +1,14 @@
 // Служебные модули
 import { EventEmitter } from './base/events';
 import { API_URL, CDN_URL } from '../utils/constants';
-import { WebLarekModel } from './model/WebLarekModel';
+import { WebLarekModel } from './model/ApiModel';
 import { StoreModel } from './model/StoreModel';
 import { BasketModel } from './model/BasketModel';
 import { FormModel } from './model/FormModel';
-import { BasketView } from './BasketView';
-import { OrderView } from './OrderView';
-import { ContactsView } from './ContactsView';
-import { ModalView } from './ModalView';
+import { BasketView } from './Basket';
+import { OrderView } from './Order';
+import { ContactsView } from './Contacts';
+import { ModalView } from './Modal';
 import { OrderSuccess } from './Success';
 import { Page } from './Page';
 
