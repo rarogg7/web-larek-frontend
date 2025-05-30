@@ -178,7 +178,7 @@ type FormError = Partial<Record<keyof IOrder, string>>;
 
 ## Работа с API:
 
-Реализуется в модуле `WebLarekModel`:
+Реализуется в модуле `ApiModel`:
 - `getCards()` — получение каталога товаров
 - `order(data: IOrder)` — отправка заказа
 
