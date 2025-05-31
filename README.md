@@ -1,15 +1,14 @@
 # Проектная работа "Веб-ларек"
-
 Стек: HTML, SCSS, TS, Webpack
 
-Структура проекта:
+## Структура проекта:
 - src/ — исходные файлы проекта
 - src/components/ — папка с JS компонентами
 - src/components/base/ — папка с базовым кодом
 - src/components/events — папка с событиями
--src/components/model — папка с моделями
+- src/components/model — папка с моделями
 
-Важные файлы:
+## Важные файлы:
 - src/pages/index.html — HTML-файл главной страницы
 - src/types/index.ts — файл с типами
 - src/index.ts — точка входа приложения
@@ -44,140 +43,160 @@ yarn build
 ```
 ---
 
-## Основные типы и интерфейсы:
-### Товар:
+
+### Типы категорий и оплаты
+```ts
+type CategoryType = 'софт-скил' | 'хард-скил' | 'кнопка' | 'дополнительное' | 'другое';
+type CashType = 'cash' | 'card' | null;
+```
+
+### Основные модели
 ```ts
 interface ICard {
-    id: string;
-    title: string;
-    description: string;
-    image: string;
-    price: number | null;
-    selected: boolean;
+  id?: string;
+  description?: string;
+  image?: string;
+  category?: CategoryType;
+  title: string;
+  price: number | null;
+  selected: boolean;
 }
-```
 
-### Расширенный товар (с признаком заказа):
-```ts
-interface IPlace {
-    isOrdered: boolean;
-}
+interface IPlace { isOrdered: boolean; }
 type ICardItem = ICard & IPlace;
-```
-
-### Корзина:
-```ts
-interface IBasket {
-    list: IBasketItem[];
-    price: number;
-}
-
 type IBasketItem = Pick<ICardItem, 'id' | 'title' | 'price'>;
 ```
 
-### Интерфейс представления корзины:
+### Корзина
 ```ts
+interface IBasket {
+  list: IBasketItem[];
+  price: number;
+}
+
 interface IBasketView {
-    render(items: IBasketItem[], total: number): void;
-    updateItem(itemId: string, selected: boolean): void;
-    clearView(): void;
+  render(items: IBasketItem[], total: number): void;
+  updateItem(itemId: string, selected: boolean): void;
+  clearView(): void;
 }
 ```
 
-### Заказ:
+### Заказ
 ```ts
-type CashType = 'cash' | 'card' | null;
+type OrderEntity = { field: string; value: string; }
 
 interface IOrder {
-    payment: CashType;
-    address: string;
-    email: string;
-    phone: string;
-    items: string[];
+  payment: CashType;
+  address: string;
+  email: string;
+  phone: string;
+  items: string[];
 }
+
+type OrderResult = { id: string; total: number; };
+type FormError = Partial<Record<keyof IOrder, string>>;
 ```
 
-### Состояние приложения:
+### Интерфейсы страницы и состояния
 ```ts
-interface IAppState {
-    catalog: ICardItem[];
-    basket: ICardItem[];
-    order: IOrder;
-    preview: ICardItem;
-    addToBasket(item: ICardItem): void;
-    removeFromBasket(itemId: number): void;
-    clearBasket(): void;
-    isLotInBasket(item: ICardItem): boolean;
-    getTotalAmount(): number;
-    getBasketIds(): number;
-    getBasketLength(): number[];
-    clearOrder(): void;
-    updateFormState(valid: boolean, errors: string[]): void;
-}
-```
-
-### Интерфейс страницы и модальных окон:
-```ts
-interface IPage {
-    counter: number;
-    store: HTMLElement[];
-    locked: boolean;
-}
-
 interface IPageElements {
-    counter: HTMLElement;
-    wrapper: HTMLElement;
-    basket: HTMLElement;
-    store: HTMLElement;
+  counter: HTMLElement;
+  wrapper: HTMLElement;
+  basket: HTMLElement;
+  store: HTMLElement;
 }
 
+interface IPage {
+  counter: number;
+  store: HTMLElement[];
+  locked: boolean;
+}
+
+interface IAppState {
+  catalog: ICardItem[];
+  basket: ICardItem[];
+  order: IOrder;
+  preview: ICardItem;
+
+  addToBasket(item: ICardItem): void;
+  removeFromBasket(itemId: number): void;
+  clearBasket(): void;
+  isLotInBasket(item: ICardItem): boolean;
+  getTotalAmount(): number;
+  getBasketIds(): number;
+  getBasketLength(): number[];
+  clearOrder(): void;
+  updateFormState(valid: boolean, errors: string[]): void;
+}
+```
+
+### Модальное окно и форма
+```ts
 interface ModalView {
-    content: HTMLElement;
-    open(content: HTMLElement): void;
-    close(): void;
-    clearContent(): void;
+  content: HTMLElement;
+  open(content: HTMLElement): void;
+  close(): void;
+  clearContent(): void;
+}
+
+interface FormOrderView {
+  formContainer: HTMLElement;
+  inputs: Record<string, HTMLInputElement>;
+  errorsContainer: HTMLElement;
+
+  renderForm(orderData?: IOrder): void;
+  updateErrors(errors: string[]): void;
+  clearForm(): void;
+  getFormData(): IOrder;
+  disableForm(): void;
+  enableForm(): void;
 }
 ```
 
 ---
 
 ## Архитектура:
+Приложение построено на принципах **MVP** (Model-View-Presenter):
 
-Приложение построено на принципах **MVC** (Model-View-Controller) / **Event-Driven Architecture**:
+### Слои:
+- **Модели (Model):**
+  - `StoreModel` — работа с каталогом
+  - `BasketModel` — управление товарами в корзине
+  - `FormModel` — работа с формами заказа и валидацией
+  - `ApiModel` — взаимодействие с сервером
 
-- **Модели (`models/`)**: управляют данными приложения
-- **Представления (`views/`)**: отвечают за отображение и взаимодействие с DOM
-- **Контроллеры (`events/`)**: обрабатывают события, связывая модель и представление
+- **Представления (View):**
+  - `CardView`, `CardPreviewView`, `Basket` — карточки товара в разных состояниях
+  - `Basket`, `Modal`, `Order`, `Contacts`, `Success` — основные UI-компоненты
+
+- **Обработчики событий (Events):**
+  - Отдельные модули для корзины, каталога, заказа, контактов и модального окна (`basketEvents.ts`, `catalogEvents.ts` и др.)
+
+- **Инициализация (`index.ts`):**
+  - Создание всех моделей, представлений и привязка событий
+  - Управление логикой отображения и изменением состояния
 
 ---
 
 ## События:
-
-### Генерируются моделью
-- `catalog:changed` — обновление списка товаров
-- `basket:changed` — обновление содержимого корзины
-- `preview:changed` — открытие карточки в модальном окне
-
 ### Генерируются представлением
-- `basket:add` — добавление товара в корзину
-- `basket:remove` — удаление товара из корзины
-- `modal:open` / `modal:close` — управление модальными окнами
-- `order:submit` — отправка формы заказа
+- `card:addToBasket` — добавление товара в корзину
+- `basket:removeCard` — удаление товара из корзины
+- `modal:opened` / `modal:closed` — управление модальными окнами
 
 ---
 
 ## Валидация:
-
 Ошибки формы заказа определяются типом:
 ```ts
 type FormError = Partial<Record<keyof IOrder, string>>;
 ```
-Они отображаются в представлении через методы `updateErrors`, `clearForm` и `disableForm`.
+
+Выполняется на каждом изменении ввода. Ошибки хранятся в `FormModel` и отображаются в UI при необходимости. Поддерживается раздельная валидация для адреса/оплаты и контактов.
 
 ---
 
 ## Взаимодействие через события:
-
 Все взаимодействия между слоями построены через **событийную шину** (`EventEmitter`). Примеры событий:
 
 | Событие                    | Назначение                               |
@@ -196,7 +215,6 @@ type FormError = Partial<Record<keyof IOrder, string>>;
 ---
 
 ## Основные компоненты:
-
 | Компонент     | Описание |
 |---------------|----------|
 | `Card`        | Представление товара в каталоге |
@@ -210,17 +228,10 @@ type FormError = Partial<Record<keyof IOrder, string>>;
 
 ---
 
-## Валидация форм:
-
-Выполняется на каждом изменении ввода. Ошибки хранятся в `FormModel` и отображаются в UI при необходимости. Поддерживается раздельная валидация для адреса/оплаты и контактов.
-
----
-
 ## API и работа с сервером:
-
 Серверные взаимодействия реализованы в `ApiModel.ts` на базе базового класса `api.ts`. Методы:
-- `getCards()` — загрузка карточек товаров
-- `order(data)` — отправка заказа
+- `getItemsList()` — загрузка карточек товаров
+- `postOrder(order: IOrder)` — отправка заказа
 
 Конфигурация URL берётся из переменных окружения:
 ```ts
@@ -229,5 +240,4 @@ CDN_URL = \`\${process.env.API_ORIGIN}/content/weblarek\`
 ```
 
 ## Заключение:
-
 Проект демонстрирует чистую архитектуру клиентского приложения с TypeScript, строгой типизацией и событийной моделью. Он может быть легко расширен, протестирован и адаптирован под реальные проекты интернет-магазинов, витрин и маркетплейсов.

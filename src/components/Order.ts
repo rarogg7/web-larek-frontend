@@ -3,8 +3,8 @@ import { settings } from "../utils/constants";
 
 export interface IOrder {
 	order: HTMLFormElement
-	btnList: HTMLButtonElement[]
-	btnSubmit: HTMLButtonElement
+	buttonList: HTMLButtonElement[]
+	buttonSubmit: HTMLButtonElement
 	payment: string
 	errors: HTMLElement
 	render(): HTMLElement
@@ -12,8 +12,8 @@ export interface IOrder {
 
 export class OrderView implements IOrder {
 	order: IOrder['order']
-	btnList: IOrder['btnList']
-	btnSubmit: IOrder['btnSubmit']
+	buttonList: IOrder['buttonList']
+	buttonSubmit: IOrder['buttonSubmit']
 	errors: IOrder['errors'];
 	payment: IOrder['payment']
 	
@@ -22,11 +22,11 @@ export class OrderView implements IOrder {
 		protected events: IEvents,
 	) {
 		this.order = template.content.querySelector('.form').cloneNode(true) as IOrder['order'];
-		this.btnList = Array.from(this.order.querySelectorAll('.button_alt'));
-		this.btnSubmit = this.order.querySelector('.order__button');
+		this.buttonList = Array.from(this.order.querySelectorAll('.button_alt'));
+		this.buttonSubmit = this.order.querySelector('.order__button');
 		this.errors = this.order.querySelector('.form__errors');
 		
-		this.btnList.forEach(btn => {
+		this.buttonList.forEach(btn => {
 			btn.addEventListener('click', () => {
 				this.setPayment.bind(this)(btn.name)
 				events.emit(settings.orderOnSetPayment, btn)
@@ -48,11 +48,11 @@ export class OrderView implements IOrder {
 	}
 	
 	setPayment(payment: string) {
-		this.btnList.forEach(btn => btn.classList.toggle('button_alt-active', btn.name === payment))
+		this.buttonList.forEach(btn => btn.classList.toggle('button_alt-active', btn.name === payment))
 	}
 	
 	isValid(v: boolean) {
-		this.btnSubmit.disabled = !v
+		this.buttonSubmit.disabled = !v
 	}
 	
 	render(): HTMLElement {

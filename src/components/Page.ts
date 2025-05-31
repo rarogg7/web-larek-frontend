@@ -1,11 +1,11 @@
 export class Page {
   gallery: HTMLElement;
-  headerCartButton: HTMLButtonElement;
+  cartButton: HTMLButtonElement;
   headerCount: HTMLElement;
 
   constructor() {
     this.gallery = document.querySelector('.gallery');
-    this.headerCartButton = document.querySelector('.header__basket');
+    this.cartButton = document.querySelector('.header__basket');
     this.headerCount = document.querySelector('.header__basket-counter');
   }
 

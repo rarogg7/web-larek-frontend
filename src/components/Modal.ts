@@ -2,8 +2,8 @@ import { IEvents } from "./base/events";
 import { settings } from "../utils/constants";
 
 export class ModalView {
-	modalContainer: HTMLElement;
-	buttonClose: HTMLButtonElement;
+	_modalContainer: HTMLElement;
+	_buttonClose: HTMLButtonElement;
 	_content: HTMLElement;
 	_pageWrapper: HTMLElement;
 	
@@ -11,20 +11,20 @@ export class ModalView {
 		container: HTMLElement,
 		protected events: IEvents,
 	) {
-		this.modalContainer = container;
-		this.buttonClose = this.modalContainer.querySelector('.modal__close');
-		this._content = this.modalContainer.querySelector('.modal__content');
+		this._modalContainer = container;
+		this._buttonClose = this._modalContainer.querySelector('.modal__close');
+		this._content = this._modalContainer.querySelector('.modal__content');
 		this._pageWrapper = document.querySelector('.page__wrapper');
 		
-		this.buttonClose.addEventListener('click', this.close.bind(this));
+		this._buttonClose.addEventListener('click', this.close.bind(this));
 		
-		this.modalContainer.addEventListener('click', this.close.bind(this));
-		const rootContainer = this.modalContainer.querySelector('.modal__container');
+		this._modalContainer.addEventListener('click', this.close.bind(this));
+		const rootContainer = this._modalContainer.querySelector('.modal__container');
 		rootContainer.addEventListener('click', e => e.stopPropagation());
 	}
 	
 	open(): void {
-		this.modalContainer.classList.add('modal_active')
+		this._modalContainer.classList.add('modal_active')
 		this.events.emit(settings.modalOpened)
 	}
 	
@@ -41,12 +41,12 @@ export class ModalView {
 	}
 	
   close(): void {
-	  this.modalContainer.classList.remove('modal_active')
+	  this._modalContainer.classList.remove('modal_active')
 	  this.events.emit(settings.modalClosed)
   }
 	
   render(): HTMLElement {
 		this.open()
-	  return this.modalContainer
+	  return this._modalContainer
   }
 }

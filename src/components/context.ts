@@ -12,8 +12,11 @@ import { ModalView } from './Modal';
 import { OrderSuccess } from './Success';
 import { Page } from './Page';
 
+// Event system
 export const events = new EventEmitter();
+export const page = new Page();
 
+// Templates
 export const basketTemplateElement = document.querySelector(
 	'#basket'
 ) as HTMLTemplateElement;
@@ -39,15 +42,15 @@ export const modalContainerTemplateElement = document.querySelector(
 	'#modal-container'
 ) as HTMLTemplateElement;
 
+// Models
 export const webLarekModel = new WebLarekModel(CDN_URL, API_URL);
 export const storeModel = new StoreModel(events);
 export const basketModel = new BasketModel();
 export const formModel = new FormModel(events);
 
+// Views
 export const basketView = new BasketView(basketTemplateElement, events);
 export const orderView = new OrderView(orderTemplateElement, events);
 export const contactsView = new ContactsView(contactsTemplateElement, events);
 export const modalView = new ModalView(modalContainerTemplateElement, events);
 export const orderSuccess = new OrderSuccess(successTemplateElement, events);
-
-export const page = new Page();
