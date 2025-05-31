@@ -1,7 +1,7 @@
 import { CategoryType, ICard } from '../types';
 import { IEvents } from './base/events';
 import { settings } from '../utils/constants';
-import { INITIAL_COLORS } from '../utils/constants';
+import { CAT_COLORS } from '../utils/constants';
 
 // Интерфейс базовой карточки
 export interface InterfaceCard {
@@ -22,7 +22,7 @@ export class CardView implements InterfaceCard {
 	protected _title: HTMLElement;
 	protected _image: HTMLImageElement;
 	protected _price: HTMLElement;
-	protected _colors: Record<CategoryType, string> = INITIAL_COLORS;
+	protected _colors: Record<CategoryType, string> = CAT_COLORS;
 
 	constructor(
 		template: HTMLTemplateElement,
